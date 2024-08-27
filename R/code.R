@@ -1,6 +1,7 @@
 library(tidyverse)
 library(gtsummary)
 library(dplyr)
+library(ggplot2)
 
 strep_tb <- read_csv(here::here("data", "strep_tb.csv")) |>
 	mutate(gender_cat = factor(gender, levels = c("M", "F"), labels = c("Male", "Female")),
@@ -48,4 +49,41 @@ tbl_uvregression(
 	method.args = list(family = binomial()),
 	exponentiate = TRUE
 )
+
+logistic_model <- glm(glasses ~ eyesight_cat + sex_cat + income,
+											data = nlsy, family = binomial()
+)
+
+tbl_regression(
+	logistic_model,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight",
+		income ~ "Income"
+	)
+)
 #Is this all we need if we are wanting to do a univariate regression? Confused from line 80 down on github page
+
+#Figure
+figure <- ggplot(strep_tb, aes(radiologic_6m_cat)) +
+					geom_bar(fill = "#0073C2FF") +
+					labs(
+						title = "Patient Outcomes at 6 Months",
+						x = "Radiologic Outcomes at 6 Months",
+						y = "Count") +
+					theme_minimal() +
+					theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+
+ggsave(plot = figure, filename = here::here("results", "figures", "figure.pdf"))
+
+#Function
+x <- strep_tb$rad_num
+
+range <- function(x) {
+	range_formula = max(x) - min(x)
+	return(range_formula)
+}
+
+range(x)
+
