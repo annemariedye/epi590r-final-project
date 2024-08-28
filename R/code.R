@@ -31,39 +31,19 @@ tbl_summary(
 	add_p(test = list(all_categorical() ~ "chisq.test")) |>
 	add_overall(col_label = "**Total**") |>
 	bold_labels()
-	#modify_footnote(everything() ~ "Chi-squared approximations may be incorrect due to unmet assumptions")
 
 #Regression
-tbl_uvregression(
-	strep_tb,
-	y = gender_cat,
-	include = c(gender_cat, baseline_condition_cat, baseline_temp_cat, baseline_esr_cat,
-							baseline_cavitation_cat,strep_resistance_cat, radiologic_6m_cat),
-	label = list(baseline_condition_cat ~ "Condition of the Patient at Baseline",
-							 baseline_temp_cat ~ "Oral Temperature at Baseline (Degrees F)",
-							 baseline_esr_cat ~ "Erythrocyte Sedimentation Rate at Baseline (millimeters per hour)",
-							 baseline_cavitation_cat ~ "Cavitation of the Lungs on Chest X-ray at Baseline",
-							 strep_resistance_cat ~ "Resistance to Streptomycin at 6 months",
-							 radiologic_6m_cat ~ "Radiologic Outcome at 6 months"),
-	method = glm,
-	method.args = list(family = binomial()),
-	exponentiate = TRUE
-)
+logistic_model <- glm(gender_cat ~ baseline_condition_cat + baseline_temp_cat +
+												baseline_esr_cat + baseline_cavitation_cat + strep_resistance_cat +
+												radiologic_6m_cat, data = strep_tb, family = binomial())
 
-logistic_model <- glm(glasses ~ eyesight_cat + sex_cat + income,
-											data = nlsy, family = binomial()
-)
-
-tbl_regression(
-	logistic_model,
-	exponentiate = TRUE,
-	label = list(
-		sex_cat ~ "Sex",
-		eyesight_cat ~ "Eyesight",
-		income ~ "Income"
-	)
-)
-#Is this all we need if we are wanting to do a univariate regression? Confused from line 80 down on github page
+tbl_regression(logistic_model, exponentiate = TRUE,
+							 label = list(baseline_condition_cat ~ "Condition of the Patient at Baseline",
+							 						 baseline_temp_cat ~ "Oral Temperature at Baseline (Degrees F)",
+							 						 baseline_esr_cat ~ "Erythrocyte Sedimentation Rate at Baseline (millimeters per hour)",
+							 						 baseline_cavitation_cat ~ "Cavitation of the Lungs on Chest X-ray at Baseline",
+							 						 strep_resistance_cat ~ "Resistance to Streptomycin at 6 months",
+							 						 radiologic_6m_cat ~ "Radiologic Outcome at 6 months"))
 
 #Figure
 figure <- ggplot(strep_tb, aes(radiologic_6m_cat)) +
@@ -74,6 +54,8 @@ figure <- ggplot(strep_tb, aes(radiologic_6m_cat)) +
 						y = "Count") +
 					theme_minimal() +
 					theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+
+print(figure)
 
 ggsave(plot = figure, filename = here::here("results", "figures", "figure.pdf"))
 
