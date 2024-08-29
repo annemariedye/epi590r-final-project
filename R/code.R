@@ -68,4 +68,3 @@ range <- function(x) {
 }
 
 range(x)
-
