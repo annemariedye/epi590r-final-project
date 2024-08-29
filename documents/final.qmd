@@ -3,7 +3,7 @@ title: "EPI 590R Final Project"
 author: "Anne Marie Dye"
 format: 
   html:
-  	embed_resources: true
+    embed_resources: true
 execute: 
   echo: false 
   warning: false
@@ -21,6 +21,10 @@ library(tidyverse)
 library(gtsummary)
 library(dplyr)
 library(ggplot2)
+library(readr)
+library(rmarkdown)
+library(quarto)
+library(knitr)
 
 strep_tb <- read_csv(here::here("data", "strep_tb.csv")) |>
 	mutate(gender_cat = factor(gender, levels = c("M", "F"), labels = c("Male", "Female")),
