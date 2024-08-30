@@ -10,7 +10,7 @@ execute:
   message: false
 ---
 
-The data used in this analysis are from a 1948 study in the British Medical Journal conducted by the Tuberculosis Trial Committee. This data set contains baseline characteristics and outcomes for `r nrow(strep_tb)` participants. In this randomized, placebo-controlled clinical trial, the treatment group received a daily dose of 2 grams of streptomycin to treat pulmonary tuberculosis compared to the placebo group, which did not receive streptomycin. 
+The data used in this analysis are from a 1948 study in the British Medical Journal conducted by the Tuberculosis Trial Committee. This data set contains baseline characteristics and outcomes for 107 participants. In this randomized, placebo-controlled clinical trial, the treatment group received a daily dose of 2 grams of streptomycin to treat pulmonary tuberculosis compared to the placebo group, which did not receive streptomycin.
 
 ```{r}
 #| output: false
@@ -42,7 +42,7 @@ strep_tb <- read_csv(here::here("data", "strep_tb.csv")) |>
 #| label: tbl-one
 #| tbl-cap: "Descriptive statistics of relevant categorical variables"
 
-tbl_summary(
+tbl_one <- tbl_summary(
 	strep_tb,
 	by = arm,
 	include = c(gender_cat, baseline_condition_cat, baseline_temp_cat, baseline_esr_cat,
@@ -60,9 +60,17 @@ tbl_summary(
 	add_p(test = list(all_categorical() ~ "chisq.test")) |>
 	add_overall(col_label = "**Total**") |>
 	bold_labels()
+
+tbl_one
 ```
 
-@tbl-one is a table of descriptive statistics for a variety of categorical variables. 
+```{r}
+#| output: false
+stats <- list(n = nrow(strep_tb), mean_chest_xray = mean(strep_tb$rad_num))
+```
+
+
+@tbl-one is a table of descriptive statistics for a variety of categorical variables. A greater proportion of patients in the streptomycin arm (`r gtsummary::inline_text(tbl_one, variable = "radiologic_6m_cat", column = "stat_2")`) showed considerable improvement at the end of the trail compared to those in the control arm (`r(gtsummary::inline_text(tbl_one, variable = "radiologic_6m_cat", column = "stat_1")`). The mean chest x-ray rating for all `r stats$n` participants at the end of the trial was `r stats$mean_chest_xray`.
 
 ## Multivariate Logistic Regression Table
 
@@ -82,6 +90,8 @@ tbl_regression(logistic_model, exponentiate = TRUE,
 							 						 strep_resistance_cat ~ "Resistance to Streptomycin at 6 months",
 							 						 radiologic_6m_cat ~ "Radiologic Outcome at 6 months"))
 ```
+
+@tbl-regression is a table of odds ratios, 95% confidence intervals and p-values for the gender regressed on patients' baseline condition, baseline oral temperature, erythrocyte sedimentation rate, cavitation of the lungs, resistance to streptomycin, and radiologic outcome after 6 months follow-up. 
 
 ## Figure of Patient Outcomes
 
@@ -103,9 +113,10 @@ print(figure)
 ggsave(plot = figure, filename = here::here("results", "figures", "figure.pdf"))
 ```
 
-## Function to Determine Range of Numeric Chest X-Ray Ratings
+@fig-one is a bar graph of patients' radiologic outcomes after a 6-month follow up period for both study arms. 
 
 ```{r}
+#| output: false
 x <- strep_tb$rad_num
 
 range <- function(x) {
