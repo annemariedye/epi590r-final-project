@@ -70,7 +70,7 @@ stats <- list(n = nrow(strep_tb), mean_chest_xray = mean(strep_tb$rad_num))
 ```
 
 
-@tbl-one is a table of descriptive statistics for a variety of categorical variables. A greater proportion of patients in the streptomycin arm (`r gtsummary::inline_text(tbl_one, variable = "radiologic_6m_cat", column = "stat_2")`) showed considerable improvement at the end of the trail compared to those in the control arm (`r(gtsummary::inline_text(tbl_one, variable = "radiologic_6m_cat", column = "stat_1")`). The mean chest x-ray rating for all `r stats$n` participants at the end of the trial was `r stats$mean_chest_xray`.
+@tbl-one is a table of descriptive statistics for a variety of categorical variables. A greater proportion of patients in the streptomycin arm (`r gtsummary::inline_text(tbl_one, variable = "radiologic_6m_cat", level = "Considerable Improvement", column = "stat_2")`) showed considerable improvement at the end of the trail compared to those in the control arm (`r gtsummary::inline_text(tbl_one, variable = "radiologic_6m_cat", level = "Considerable Improvement", column = "stat_1")`). The mean chest x-ray rating for all `r stats$n` participants at the end of the trial was `r stats$mean_chest_xray`.
 
 ## Multivariate Logistic Regression Table
 
